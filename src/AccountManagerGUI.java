@@ -49,11 +49,9 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 	 * Default constructor for AccountManager class
 	 */
 	public AccountManagerGUI(BankAccount account) {
-		GridBagConstraints abpConst = null;				// GBL constraints for accountDetailPanel orientation
-		GridBagConstraints teConst = null;				// GBL constraints for textEntryPanel orientation
-		GridBagConstraints aConst = null;				// GBL constraints for actionPanel orientation
-		
-		setTitle("Bank Account Management");
+		GridBagConstraints layoutConstraints = null;		// Re-usable layout constraints variable			
+
+		this.setTitle("Bank Account Management");
 		
 		accountIDLabel = new JLabel("Account ID: ");
 		accountIDField.setText(Integer.toString(account.getAccountID()));
@@ -76,10 +74,29 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 		
 		withdrawalField = new JFormattedTextField(NumberFormat.getNumberInstance());
 		withdrawalField.setEditable(true);
+		withdrawalField.setColumns(15);
 		depositField = new JFormattedTextField(NumberFormat.getNumberInstance());
 		depositField.setEditable(true);
+		depositField.setColumns(15);
 		
+		accountDetailPanel = new JPanel(new GridBagLayout());
+		textEntryPanel = new JPanel(new GridBagLayout());
+		actionPanel = new JPanel(new GridBagLayout());
 		
+		// New layout for the window
+		this.setLayout(new GridBagLayout());
+		this.add(accountDetailPanel, setConstraints(0,0,10,10,10,10));
+		this.add(textEntryPanel, setConstraints(0,1,10,10,10,10));
+		this.add(actionPanel, setConstraints(0,2,10,10,10,10));
+		
+		// Layout for the accountDetailPanel
+		accountDetailPanel.add(accountIDLabel, setConstraints(0,0,10,10,10,1));
+		accountDetailPanel.add(accountIDField, setConstraints(1,0,10,1,10,10));
+		accountDetailPanel.add(accountNameLabel, setConstraints(0,1,10,10,10,1));
+		accountDetailPanel.add(accountNameField, setConstraints(1,1,10,1,10,10));
+		accountDetailPanel.add(accountBalanceLabel, setConstraints(0,2,10,10,10,1));
+		accountDetailPanel.add(accountBalanceField, setConstraints(1,2,10,1,10,10));
+
 		
 	}
 	
@@ -89,6 +106,25 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		// TODO: Add actions
+	}
+	
+	/**
+	 * Utility function to quickly set up a GridBag constraint with basic x, y, and inset values
+	 * @param x Sets gridx
+	 * @param y Sets gridy
+	 * @param t Sets top inset
+	 * @param l Sets left inset
+	 * @param b Sets bottom inset
+	 * @param r Sets right inset
+	 * @return GridBagConstraints 
+	 */
+	private GridBagConstraints setConstraints(int x, int y, int t, int l, int b, int r) {
+		GridBagConstraints layoutConstraints = new GridBagConstraints();
+		layoutConstraints.gridx = x;
+		layoutConstraints.gridy = y;
+		layoutConstraints.insets = new Insets(t,l,b,r);
+		
+		return layoutConstraints;
 	}
 
 }
