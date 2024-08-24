@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * AccountManager class provides GUI and main program for the bank account application
+ * AccountManager class provides GUI for the bank account application
  */
 public class AccountManager extends JFrame implements ActionListener {
 	private JPanel accountDetailPanel;					// Contains account details components
@@ -38,6 +38,8 @@ public class AccountManager extends JFrame implements ActionListener {
 	private JFormattedTextField withdrawalField;		// Holds withdrawal input
 	private JFormattedTextField depositField;			// Holds deposit input
 	private JTextField accountBalanceField;				// Displays account balance
+	private JTextField accountIDField;					// Displays account ID
+	private JTextField accountNameField;				// Displays account holder's name
 	private JButton depositButton;						// Creates event for deposit
 	private JButton withdrawalButton;					// Creates event for withdrawal
 	private JButton exitButton;							// Creates event for program exit
@@ -52,16 +54,15 @@ public class AccountManager extends JFrame implements ActionListener {
 		
 		this.setTitle("Bank Account Management");
 		
+		this.accountIDLabel.setText("Account ID: ");
+		this.accountIDField.setText(Integer.toString(account.getAccountID()));
+		this.accountNameField.setText("Account Holder: ");
+		this.accountNameField.setText(account.getFirstName() + " " + account.getLastName());
+		this.accountBalanceField.setText("Account Balance: ");
+		this.accountBalanceField.setText(Double.toString(account.getBalance()));
+		this.withdrawalLabel.setText("Withdrawal amount: ");
+		this.depositLabel.setText("Deposit amount: ");
 		
-	}
-	
-	/**
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
