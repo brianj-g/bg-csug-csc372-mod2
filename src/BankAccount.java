@@ -59,7 +59,7 @@ public class BankAccount {
 	 * @param balance Sets the balance to value of the parameter.
 	 * 
 	 */
-	public void setBalance(double balance) {
+	protected void setBalance(double balance) {
 		this.balance = balance;
 	}
 

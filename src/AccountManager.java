@@ -24,6 +24,7 @@ public class AccountManager {
 		// Make an initial deposit
 		myBankAccount.deposit(1000.0);
 
+		// Instantiate the user interface
 		AccountManagerGUI accountInterface = new AccountManagerGUI(myBankAccount);
 	}
 
