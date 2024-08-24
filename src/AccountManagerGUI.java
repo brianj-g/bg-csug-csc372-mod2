@@ -34,16 +34,20 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 	private JPanel textEntryPanel;						// Contains text entry components
 	private JPanel actionPanel;							// Contains application control components
 	private JLabel accountIDLabel;						// Label for the account ID
+	private JLabel accountIDDisplayLabel;				// Label to display the account ID
 	private JLabel accountNameLabel;					// Label for account holder's name
+	private JLabel accountNameDisplayLabel;				// Label to display the account holder's name
 	private JLabel accountBalanceLabel;					// Label for account balance field
+	private JLabel accountBalanceDisplayLabel;			// Label to display the balance
 	private JLabel withdrawalLabel;						// Label for withdrawal field
 	private JLabel depositLabel;						// Label for deposit field
 	private JLabel notificationLabel;					// Label for informational messages
 	private JFormattedTextField withdrawalField;		// Holds withdrawal input
 	private JFormattedTextField depositField;			// Holds deposit input
-	private JTextField accountBalanceField;				// Displays account balance
-	private JTextField accountIDField;					// Displays account ID
-	private JTextField accountNameField;				// Displays account holder's name
+	private JTextField accountBalanceField;				// Updates account balance
+	private JTextField accountNameField;				// Updates account holder's name
+	private JButton manualBalanceButton;				// Creates event to manually update balance
+	private JButton manualNameButton;					// Creates event to manually update name
 	private JButton depositButton;						// Creates event for deposit
 	private JButton withdrawalButton;					// Creates event for withdrawal
 	private JButton exitButton;							// Creates event for program exit
@@ -64,16 +68,17 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		accountIDLabel = new JLabel("Account ID: ");
-		accountIDField = new JTextField();
-		accountIDField.setText(Integer.toString(account.getAccountID()));
+		accountIDDisplayLabel = new JLabel(Integer.toString(account.getAccountID()));
 		
 		accountNameLabel = new JLabel("Account Holder: ");
+		accountNameDisplayLabel = new JLabel(account.getFirstName() + " " + account.getLastName());
 		accountNameField = new JTextField(15);
-		accountNameField.setText(account.getFirstName() + " " + account.getLastName());
+		accountNameField.setEditable(true);
 		
 		accountBalanceLabel = new JLabel("Account Balance: ");
+		accountBalanceDisplayLabel = new JLabel(Double.toString(account.getBalance()))
 		accountBalanceField = new JTextField(15);
-		accountBalanceField.setText(Double.toString(account.getBalance()));
+		accountBalanceField.setEditable(true);
 		
 		withdrawalLabel = new JLabel("Withdrawal amount: ");
 		depositLabel = new JLabel("Deposit amount: ");
@@ -84,6 +89,8 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 		withdrawalButton.addActionListener(this);
 		exitButton = new JButton("Exit");
 		exitButton.addActionListener(this);
+		manualBalanceButton = new JButton("Set New Balance");
+		manualNameButton = new JButton("Set New Name");
 		
 		withdrawalField = new JFormattedTextField(NumberFormat.getNumberInstance());
 		withdrawalField.setEditable(true);
@@ -107,11 +114,11 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 		// Layout for the accountDetailPanel
 		accountDetailPanel = new JPanel(new GridBagLayout());
 		accountDetailPanel.add(accountIDLabel, setConstraints(0,0,10,10,10,1));
-		accountDetailPanel.add(accountIDField, setConstraints(1,0,10,1,10,10));
+		accountDetailPanel.add(accountIDDisplayLabel, setConstraints(1,0,10,1,10,10));
 		accountDetailPanel.add(accountNameLabel, setConstraints(0,1,10,10,10,1));
-		accountDetailPanel.add(accountNameField, setConstraints(1,1,10,1,10,10));
+		accountDetailPanel.add(accountNameDisplayLabel, setConstraints(1,1,10,1,10,10));
 		accountDetailPanel.add(accountBalanceLabel, setConstraints(0,2,10,10,10,1));
-		accountDetailPanel.add(accountBalanceField, setConstraints(1,2,10,1,10,10));
+		accountDetailPanel.add(accountBalanceDisplayLabel, setConstraints(1,2,10,1,10,10));
 		
 		// Layout for the textInputPanel
 		textEntryPanel = new JPanel(new GridBagLayout());
@@ -158,7 +165,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 				dialog.setVisible(true);
 			}		
 			// Updated the account balance display field
-			this.accountBalanceField.setText(Double.toString(this.account.getBalance()));
+			this.accountBalanceDisplayLabel.setText(Double.toString(this.account.getBalance()));
 		} else if (buttonEvent.getSource() == withdrawalButton) {
 			Double amount = ((Number) withdrawalField.getValue()).doubleValue();
 			try {
@@ -173,7 +180,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 			    dialog.setVisible(true);
 			}
 			// Update the account balance display field
-			this.accountBalanceField.setText(Double.toString(this.account.getBalance()));
+			this.accountBalanceDisplayLabel.setText(Double.toString(this.account.getBalance()));
 		} else if (buttonEvent.getSource() == exitButton) {
 			// Build the string to display on the exit confirmation
 			exitStringOut.printf("Final Balance: %.2f\n\n", this.account.getBalance());
@@ -185,6 +192,10 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 				this.dispose();
 				System.exit(0);
 			}
+		} else if (buttonEvent.getSource() == manualBalanceButton) {
+			// TODO: event for manual balance
+		} else if (buttonEvent.getSource() == manualNameButton) {
+			// TODO: event for name update
 		}
 	}
 	
