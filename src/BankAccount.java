@@ -4,7 +4,7 @@
  * CSC372: Programming II
  * Colorado State University Global
  * Dr. Vanessa Cooper
- * August 18, 2024
+ * August 25, 2024
  * 
  */
 
@@ -41,7 +41,7 @@ public class BankAccount {
 	 */
 	public void withdrawal(double amount) {
 		if (amount > balance) {
-			throw new IllegalArgumentException("Insufficient funds");
+			throw new IllegalArgumentException("Insufficient funds to withdraw");
 		}
 		this.balance -= amount;
 	}
