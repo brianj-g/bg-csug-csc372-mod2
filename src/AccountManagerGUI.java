@@ -8,6 +8,7 @@
  * 
  */
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -88,6 +89,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 		accountBalanceField = new JFormattedTextField(NumberFormat.getNumberInstance());
 		accountBalanceField.setColumns(15);
 		accountBalanceField.setEditable(true);
+		accountBalanceField.setPreferredSize(new Dimension(150, 25));
 		
 		withdrawalLabel = new JLabel("Withdrawal amount: ");
 		depositLabel = new JLabel("Deposit amount: ");
@@ -99,15 +101,19 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 		exitButton = new JButton("Exit");
 		exitButton.addActionListener(this);
 		manualBalanceButton = new JButton("Set New Balance");
+		manualBalanceButton.addActionListener(this);
 		
 		withdrawalField = new JFormattedTextField(NumberFormat.getNumberInstance());
 		withdrawalField.setEditable(true);
 		withdrawalField.setColumns(15);
+		withdrawalField.setPreferredSize(new Dimension(150, 25));
 		depositField = new JFormattedTextField(NumberFormat.getNumberInstance());
 		depositField.setEditable(true);
 		depositField.setColumns(15);
+		depositField.setPreferredSize(new Dimension(150, 25));
 		
 		notificationLabel = new JLabel(" ");
+		notificationLabel.setPreferredSize(new Dimension(300, 25));
 		/**
 		 * Timer object is initialized to clear the notification label
 		 */
@@ -118,8 +124,6 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 	        }
 	    });
 	    notificationTimer.setRepeats(false);
-	    
-	    GridBagConstraints movableConstraint = null;
 		
 		// Layout for the accountDetailPanel
 		accountDetailPanel = new JPanel(new GridBagLayout());
@@ -138,8 +142,8 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 		labelConst.anchor = GridBagConstraints.CENTER;
 		labelConst.insets = new Insets(10,10,10,10);
 		overridePanel.add(overridePanelLabel, labelConst);
-		overridePanel.add(manualBalanceButton, setConstraints(0,1,10,10,10,1,GridBagConstraints.WEST, 0.5));
-		overridePanel.add(accountBalanceField, setConstraints(1,1,10,1,10,10,GridBagConstraints.WEST, 0.5));
+		overridePanel.add(manualBalanceButton, setConstraints(0,1,10,10,10,1,GridBagConstraints.EAST, 0.5));
+		overridePanel.add(accountBalanceField, setConstraints(1,1,10,1,10,10,GridBagConstraints.EAST, 0.5));
 		Border border = BorderFactory.createLineBorder(java.awt.Color.BLACK, 1);
 		overridePanel.setBorder(border);
 		
@@ -190,7 +194,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 				dialog.setVisible(true);
 			}		
 			// Updated the account balance display field
-			this.accountBalanceDisplayLabel.setText(Double.toString(this.account.getBalance()));
+			this.accountBalanceDisplayLabel.setText(String.format("$%.2f",  account.getBalance()));
 		} else if (buttonEvent.getSource() == withdrawalButton) {
 			Double amount = ((Number) withdrawalField.getValue()).doubleValue();
 			try {
@@ -205,7 +209,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 			    dialog.setVisible(true);
 			}
 			// Update the account balance display field
-			this.accountBalanceDisplayLabel.setText(Double.toString(this.account.getBalance()));
+			this.accountBalanceDisplayLabel.setText(String.format("$%.2f",  account.getBalance()));
 		} else if (buttonEvent.getSource() == exitButton) {
 			// Build the string to display on the exit confirmation
 			exitStringOut.printf("Final Balance: $%.2f\n\n", this.account.getBalance());
@@ -229,6 +233,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 				JDialog dialog = optionPane.createDialog("Warning");
 				dialog.setVisible(true);
 			}
+			this.accountBalanceDisplayLabel.setText(String.format("$%.2f",  account.getBalance()));
 		}
 	}
 	
@@ -243,12 +248,11 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 	 * @param wx Sets weight for x
 	 * @return GridBagConstraints 
 	 */
-	private GridBagConstraints setConstraints(int x, int y, int t, int l, int b, int r, Double wx) {
+	private GridBagConstraints setConstraints(int x, int y, int t, int l, int b, int r) {
 		GridBagConstraints layoutConstraints = new GridBagConstraints();
 		layoutConstraints.gridx = x;
 		layoutConstraints.gridy = y;
 		layoutConstraints.insets = new Insets(t,l,b,r);
-		layoutConstraints.weightx = wx;
 		layoutConstraints.fill = GridBagConstraints.HORIZONTAL;
 		
 		return layoutConstraints;
