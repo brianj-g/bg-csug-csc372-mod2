@@ -95,7 +95,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 		/**
 		 * Timer object is initialized to clear the notification label
 		 */
-	    notificationTimer = new Timer(5000, new ActionListener() {
+	    notificationTimer = new Timer(3000, new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
 	            notificationLabel.setText(" ");  // Clear the notification label
@@ -149,7 +149,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 				this.account.deposit(amount);	
 				this.notificationLabel.setText("Deposited $" + amount);
 			    this.notificationTimer.start();
-				this.depositField.setText(null);
+				this.depositField.setValue(null);
 			} catch(Exception e) {
 				JOptionPane optionPane = new JOptionPane(e.getMessage(), JOptionPane.WARNING_MESSAGE);
 				JDialog dialog = optionPane.createDialog("Warning");
@@ -162,8 +162,8 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 				this.account.withdrawal(amount);
 				this.notificationLabel.setText("Withdrew $" + amount);
 			    this.notificationTimer.start();
-				this.withdrawalField.setText(null);
-			} catch(IllegalArgumentException e) {
+				this.withdrawalField.setValue(null);
+			} catch(Exception e) {
 				JOptionPane optionPane = new JOptionPane(e.getMessage(), JOptionPane.WARNING_MESSAGE);
 			    JDialog dialog = optionPane.createDialog("Warning");
 			    dialog.setVisible(true);
@@ -171,7 +171,15 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 				
 			this.accountBalanceField.setText(Double.toString(this.account.getBalance()));
 		} else if (buttonEvent.getSource() == exitButton) {
-			JOptionPane optionPane = new JOptionPane("Final Balance: " + this.account.getBalance(), JOptionPane.YES_NO_OPTION);
+			System.out.println("Exiting....");
+			exitStringOut.printf("Final Balance: %.2f\n\n", this.account.getBalance());
+			exitStringOut.printf("Are you sure you'd like to exit?");
+			int toExit = JOptionPane.showConfirmDialog(this, exitStringStream.toString(), "Exit Confirmation", JOptionPane.YES_NO_OPTION);
+			exitStringOut.close();
+			if (toExit == JOptionPane.YES_OPTION) {
+				this.dispose();
+				System.exit(0);
+			}
 		}
 	}
 	
