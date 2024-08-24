@@ -1,5 +1,5 @@
 /*
- * Module 1 CTA Option #1: Implementing a superclass bank account
+ * Module 2 CTA Option 1: Creating a GUI Bank Balance Application
  * Brian Gunther
  * CSC372: Programming II
  * Colorado State University Global
