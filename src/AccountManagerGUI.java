@@ -50,6 +50,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 	private BankAccount account;						// Creates a bank account object to reference the user's account
 	private Timer notificationTimer;					// Creates a timer for blanking the notification label
 	
+	// Use output streams to build a formatted string for the exit dialog
 	private StringWriter exitStringStream = new StringWriter();
 	private PrintWriter exitStringOut = new PrintWriter(exitStringStream);
 	
@@ -146,6 +147,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 		if (buttonEvent.getSource() == depositButton) {
 			Double amount = ((Number) depositField.getValue()).doubleValue();
 			try {
+				// Deposit the requested amount
 				this.account.deposit(amount);	
 				this.notificationLabel.setText("Deposited $" + amount);
 			    this.notificationTimer.start();
@@ -155,10 +157,12 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 				JDialog dialog = optionPane.createDialog("Warning");
 				dialog.setVisible(true);
 			}		
+			// Updated the account balance display field
 			this.accountBalanceField.setText(Double.toString(this.account.getBalance()));
 		} else if (buttonEvent.getSource() == withdrawalButton) {
 			Double amount = ((Number) withdrawalField.getValue()).doubleValue();
 			try {
+				// Withdraw the requested amount
 				this.account.withdrawal(amount);
 				this.notificationLabel.setText("Withdrew $" + amount);
 			    this.notificationTimer.start();
@@ -168,12 +172,13 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 			    JDialog dialog = optionPane.createDialog("Warning");
 			    dialog.setVisible(true);
 			}
-				
+			// Update the account balance display field
 			this.accountBalanceField.setText(Double.toString(this.account.getBalance()));
 		} else if (buttonEvent.getSource() == exitButton) {
-			System.out.println("Exiting....");
+			// Build the string to display on the exit confirmation
 			exitStringOut.printf("Final Balance: %.2f\n\n", this.account.getBalance());
 			exitStringOut.printf("Are you sure you'd like to exit?");
+			// Use a confirmation dialog to display the current balance and confirm exit
 			int toExit = JOptionPane.showConfirmDialog(this, exitStringStream.toString(), "Exit Confirmation", JOptionPane.YES_NO_OPTION);
 			exitStringOut.close();
 			if (toExit == JOptionPane.YES_OPTION) {
