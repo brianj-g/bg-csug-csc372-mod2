@@ -57,9 +57,9 @@ public class BankAccount {
 	/**
 	 * 
 	 * @param balance Sets the balance to value of the parameter.
-	 * This method is set to protected since it should only be used by the CheckingAccount subclass
+	 * 
 	 */
-	protected void setBalance(double balance) {
+	public void setBalance(double balance) {
 		this.balance = balance;
 	}
 

@@ -8,6 +8,7 @@
  * 
  */
 
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -21,7 +22,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.BorderFactory;
+
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
@@ -33,6 +39,8 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 	private JPanel accountDetailPanel;					// Contains account details components
 	private JPanel textEntryPanel;						// Contains text entry components
 	private JPanel actionPanel;							// Contains application control components
+	private JPanel overridePanel;						// Contains manual update components
+	private JLabel overridePanelLabel;					// Label for the manual overrides panel
 	private JLabel accountIDLabel;						// Label for the account ID
 	private JLabel accountIDDisplayLabel;				// Label to display the account ID
 	private JLabel accountNameLabel;					// Label for account holder's name
@@ -44,10 +52,8 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 	private JLabel notificationLabel;					// Label for informational messages
 	private JFormattedTextField withdrawalField;		// Holds withdrawal input
 	private JFormattedTextField depositField;			// Holds deposit input
-	private JTextField accountBalanceField;				// Updates account balance
-	private JTextField accountNameField;				// Updates account holder's name
+	private JFormattedTextField accountBalanceField;	// Updates account balance
 	private JButton manualBalanceButton;				// Creates event to manually update balance
-	private JButton manualNameButton;					// Creates event to manually update name
 	private JButton depositButton;						// Creates event for deposit
 	private JButton withdrawalButton;					// Creates event for withdrawal
 	private JButton exitButton;							// Creates event for program exit
@@ -67,17 +73,20 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 		this.setTitle("Bank Account Management");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		overridePanelLabel = new JLabel("Administrative Overrides", SwingConstants.CENTER);
+		Font overrideFont = UIManager.getFont("Label.font");
+		overridePanelLabel.setFont(new Font(overrideFont.getName(), Font.PLAIN, 14));
+		
 		accountIDLabel = new JLabel("Account ID: ");
 		accountIDDisplayLabel = new JLabel(Integer.toString(account.getAccountID()));
 		
 		accountNameLabel = new JLabel("Account Holder: ");
 		accountNameDisplayLabel = new JLabel(account.getFirstName() + " " + account.getLastName());
-		accountNameField = new JTextField(15);
-		accountNameField.setEditable(true);
 		
 		accountBalanceLabel = new JLabel("Account Balance: ");
-		accountBalanceDisplayLabel = new JLabel(Double.toString(account.getBalance()))
-		accountBalanceField = new JTextField(15);
+		accountBalanceDisplayLabel = new JLabel(String.format("$%.2f",  account.getBalance()));
+		accountBalanceField = new JFormattedTextField(NumberFormat.getNumberInstance());
+		accountBalanceField.setColumns(15);
 		accountBalanceField.setEditable(true);
 		
 		withdrawalLabel = new JLabel("Withdrawal amount: ");
@@ -90,7 +99,6 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 		exitButton = new JButton("Exit");
 		exitButton.addActionListener(this);
 		manualBalanceButton = new JButton("Set New Balance");
-		manualNameButton = new JButton("Set New Name");
 		
 		withdrawalField = new JFormattedTextField(NumberFormat.getNumberInstance());
 		withdrawalField.setEditable(true);
@@ -110,36 +118,53 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 	        }
 	    });
 	    notificationTimer.setRepeats(false);
+	    
+	    GridBagConstraints movableConstraint = null;
 		
 		// Layout for the accountDetailPanel
 		accountDetailPanel = new JPanel(new GridBagLayout());
-		accountDetailPanel.add(accountIDLabel, setConstraints(0,0,10,10,10,1));
-		accountDetailPanel.add(accountIDDisplayLabel, setConstraints(1,0,10,1,10,10));
-		accountDetailPanel.add(accountNameLabel, setConstraints(0,1,10,10,10,1));
-		accountDetailPanel.add(accountNameDisplayLabel, setConstraints(1,1,10,1,10,10));
-		accountDetailPanel.add(accountBalanceLabel, setConstraints(0,2,10,10,10,1));
-		accountDetailPanel.add(accountBalanceDisplayLabel, setConstraints(1,2,10,1,10,10));
+		accountDetailPanel.add(accountIDLabel, setConstraints(0,0,10,10,10,1,GridBagConstraints.WEST, 0.5));
+		accountDetailPanel.add(accountIDDisplayLabel, setConstraints(1,0,10,1,10,10,GridBagConstraints.WEST, 0.5));
+		accountDetailPanel.add(accountNameLabel, setConstraints(0,1,10,10,10,1,GridBagConstraints.WEST, 0.5));
+		accountDetailPanel.add(accountNameDisplayLabel, setConstraints(1,1,10,1,10,10,GridBagConstraints.WEST, 0.5));
+		accountDetailPanel.add(accountBalanceLabel, setConstraints(0,2,10,10,10,1,GridBagConstraints.WEST, 0.5));
+		accountDetailPanel.add(accountBalanceDisplayLabel, setConstraints(1,2,10,1,10,10,GridBagConstraints.WEST, 0.5));
+		
+		// Layout for the overridePanel
+		overridePanel = new JPanel(new GridBagLayout());
+		GridBagConstraints labelConst = new GridBagConstraints();
+		labelConst.gridx = 0;
+		labelConst.gridy = 0;
+		labelConst.anchor = GridBagConstraints.CENTER;
+		labelConst.insets = new Insets(10,10,10,10);
+		overridePanel.add(overridePanelLabel, labelConst);
+		overridePanel.add(manualBalanceButton, setConstraints(0,1,10,10,10,1,GridBagConstraints.WEST, 0.5));
+		overridePanel.add(accountBalanceField, setConstraints(1,1,10,1,10,10,GridBagConstraints.WEST, 0.5));
+		Border border = BorderFactory.createLineBorder(java.awt.Color.BLACK, 1);
+		overridePanel.setBorder(border);
+		
 		
 		// Layout for the textInputPanel
 		textEntryPanel = new JPanel(new GridBagLayout());
-		textEntryPanel.add(depositLabel, setConstraints(0,0,10,10,10,1));
-		textEntryPanel.add(depositField, setConstraints(1,0,10,1,10,10));
-		textEntryPanel.add(withdrawalLabel, setConstraints(0,1,10,10,10,1));
-		textEntryPanel.add(withdrawalField, setConstraints(1,1,10,1,10,10));
+		textEntryPanel.add(depositLabel, setConstraints(0,0,10,10,10,1,GridBagConstraints.WEST, 0.5));
+		textEntryPanel.add(depositField, setConstraints(1,0,10,1,10,10,GridBagConstraints.WEST, 0.5));
+		textEntryPanel.add(withdrawalLabel, setConstraints(0,1,10,10,10,1,GridBagConstraints.WEST, 0.5));
+		textEntryPanel.add(withdrawalField, setConstraints(1,1,10,1,10,10,GridBagConstraints.WEST, 0.5));
 
 		// Layout for the actionPanel
 		actionPanel = new JPanel(new GridBagLayout());
-		actionPanel.add(notificationLabel, setConstraints(0,0,10,10,50,10));
-		actionPanel.add(depositButton, setConstraints(0,1,10,10,10,10));
-		actionPanel.add(withdrawalButton, setConstraints(1,1,10,10,10,10));
-		actionPanel.add(exitButton, setConstraints(2,1,10,10,10,10));
+		actionPanel.add(notificationLabel, setConstraints(0,0,10,10,50,10,GridBagConstraints.WEST, 0.5));
+		actionPanel.add(depositButton, setConstraints(0,1,10,30,10,10,GridBagConstraints.WEST, 0.5));
+		actionPanel.add(withdrawalButton, setConstraints(1,1,10,10,10,10,GridBagConstraints.WEST, 0.5));
+		actionPanel.add(exitButton, setConstraints(2,1,10,10,10,10,GridBagConstraints.WEST, 0.5));
 
 
 		// Layout for the main JFrame
 		this.setLayout(new GridBagLayout());
-		this.add(accountDetailPanel, setConstraints(0,0,10,10,10,10));
-		this.add(textEntryPanel, setConstraints(0,1,10,10,10,10));
-		this.add(actionPanel, setConstraints(0,2,10,10,10,10));
+		this.add(accountDetailPanel, setConstraints(0,0,10,10,10,10,GridBagConstraints.WEST, 0.5));
+		this.add(overridePanel, setConstraints(1,0,10,10,10,10,GridBagConstraints.WEST, 0.5));
+		this.add(textEntryPanel, setConstraints(0,1,10,10,10,10,GridBagConstraints.WEST, 0.5));
+		this.add(actionPanel, setConstraints(0,2,10,10,10,10,GridBagConstraints.WEST, 0.5));
 		
 		this.pack();
 		this.setLocationRelativeTo(null);
@@ -156,7 +181,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 			try {
 				// Deposit the requested amount
 				this.account.deposit(amount);	
-				this.notificationLabel.setText("Deposited $" + amount);
+				this.notificationLabel.setText("Deposited $" + String.format("%.2f", amount));
 			    this.notificationTimer.start();
 				this.depositField.setValue(null);
 			} catch(Exception e) {
@@ -171,7 +196,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 			try {
 				// Withdraw the requested amount
 				this.account.withdrawal(amount);
-				this.notificationLabel.setText("Withdrew $" + amount);
+				this.notificationLabel.setText("Withdrew $" + String.format("%.2f", amount));
 			    this.notificationTimer.start();
 				this.withdrawalField.setValue(null);
 			} catch(Exception e) {
@@ -183,7 +208,7 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 			this.accountBalanceDisplayLabel.setText(Double.toString(this.account.getBalance()));
 		} else if (buttonEvent.getSource() == exitButton) {
 			// Build the string to display on the exit confirmation
-			exitStringOut.printf("Final Balance: %.2f\n\n", this.account.getBalance());
+			exitStringOut.printf("Final Balance: $%.2f\n\n", this.account.getBalance());
 			exitStringOut.printf("Are you sure you'd like to exit?");
 			// Use a confirmation dialog to display the current balance and confirm exit
 			int toExit = JOptionPane.showConfirmDialog(this, exitStringStream.toString(), "Exit Confirmation", JOptionPane.YES_NO_OPTION);
@@ -193,9 +218,17 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 				System.exit(0);
 			}
 		} else if (buttonEvent.getSource() == manualBalanceButton) {
-			// TODO: event for manual balance
-		} else if (buttonEvent.getSource() == manualNameButton) {
-			// TODO: event for name update
+			Double amount = ((Number) accountBalanceField.getValue()).doubleValue();
+			try {
+				this.account.setBalance(amount);
+				this.notificationLabel.setText("Admin changed balance to $" + String.format("%.2f",  amount));
+				this.notificationTimer.start();
+				this.accountBalanceField.setValue(null);
+			} catch(Exception e) {
+				JOptionPane optionPane = new JOptionPane(e.getMessage(), JOptionPane.WARNING_MESSAGE);
+				JDialog dialog = optionPane.createDialog("Warning");
+				dialog.setVisible(true);
+			}
 		}
 	}
 	
@@ -207,18 +240,42 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 	 * @param l Sets left inset
 	 * @param b Sets bottom inset
 	 * @param r Sets right inset
+	 * @param wx Sets weight for x
 	 * @return GridBagConstraints 
 	 */
-	private GridBagConstraints setConstraints(int x, int y, int t, int l, int b, int r) {
+	private GridBagConstraints setConstraints(int x, int y, int t, int l, int b, int r, Double wx) {
 		GridBagConstraints layoutConstraints = new GridBagConstraints();
 		layoutConstraints.gridx = x;
 		layoutConstraints.gridy = y;
 		layoutConstraints.insets = new Insets(t,l,b,r);
+		layoutConstraints.weightx = wx;
 		layoutConstraints.fill = GridBagConstraints.HORIZONTAL;
 		
 		return layoutConstraints;
 	}
-
-
-
+	
+	/**
+	 * Overload for setConstraints
+	 * 
+	 * @param x Sets gridx
+	 * @param y Sets gridy
+	 * @param t Sets top inset
+	 * @param l Sets left inset
+	 * @param b Sets bottom inset
+	 * @param r Sets right inset
+	 * @param j Sets cardinal justification
+	 * @param wx Sets weight for x
+	 * @return GridBagConstraints 
+	 */
+	private GridBagConstraints setConstraints(int x, int y, int t, int l, int b, int r, int j, Double wx) {
+		GridBagConstraints layoutConstraints = new GridBagConstraints();
+		layoutConstraints.gridx = x;
+		layoutConstraints.gridy = y;
+		layoutConstraints.insets = new Insets(t,l,b,r);
+		layoutConstraints.anchor = j;
+		layoutConstraints.weightx = wx;
+		layoutConstraints.fill = GridBagConstraints.HORIZONTAL;
+		
+		return layoutConstraints;
+	}
 }
