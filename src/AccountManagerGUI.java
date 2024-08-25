@@ -179,7 +179,6 @@ public class AccountManagerGUI extends JFrame implements ActionListener {
 		actionPanel.add(withdrawalButton, setConstraints(2,1,10,10,10,10,GridBagConstraints.WEST,GridBagConstraints.NONE, 0.0));
 		actionPanel.add(exitButton, setConstraints(0,1,10,10,10,10,GridBagConstraints.WEST,GridBagConstraints.NONE, 0.0));
 
-
 		// Layout for the main JFrame
 		this.setLayout(new GridBagLayout());
 		this.add(accountDetailPanel, setConstraints(0,0,10,10,10,10,GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, 0.5));
